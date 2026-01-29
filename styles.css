@@ -37,6 +37,12 @@ body {
     border-bottom: 1px solid #E0E0E0;
 }
 
+.edit {
+    width: 30px;
+    padding-left: 8px;
+    cursor: pointer;
+}
+
 .top-bar h1 {
     font-size: 1.5rem;
     color: rgb(16, 30, 49);
