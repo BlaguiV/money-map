@@ -11,10 +11,10 @@
 
 <body>
     <div class="container">
-        <div class="top-bar">
+        <header class="top-bar">
             <img class="wallet" src="assets/wallet.svg" />
             <h1>MoneyMap</h1>
-        </div>
+        </header>
 
         <div class="spending">
             <div class="today">
@@ -34,17 +34,46 @@
         <div class="add-expense">
             <h3>Add Expense</h2>
                 <div class="functionality">
-                    <input placeholder="Enter Amount" type="number" min="0" />
-                    <input placeholder="Enter Category" type="text" />
-                    <input id="input-date" type="date" />
-                    <button class="btn-add">Add Expense</button>
+                    <input id="amount" type="number" placeholder="Amount" min="0" />
+
+                    <input id="category" type="text" placeholder="Category" />
+
+                    <input id="date" type="date" />
+
+                    <input id="note" type="text" placeholder="Note (optional)" />
+                    <button>Add Expense</button>
                 </div>
         </div>
+
+        <div class="expenses">
+            <div class="expenses-header">
+                <div>Date</div>
+                <div>Amount</div>
+                <div>Category</div>
+                <div>Note</div>
+            </div>
+            <div class="expenses-row">
+                <div>10 May 2023</div>
+                <div>$130</div>
+                <div>Store</div>
+                <div>Buy vegetables</div>
+                <div><img src="./assets/delete.svg" /></div>
+            </div>
+            <div class="expenses-row">
+                <div>10 September 2023</div>
+                <div>$200</div>
+                <div>Gas station</div>
+                <div>Charge car</div>
+                <div><img src="./assets/delete.svg" /></div>
+            </div>
+
+        </div>
+
 
     </div>
 
     <script>
-        const inputDate = document.getElementById('input-date')
+        const inputDate = document.getElementById('date')
         let today = new Date()
         let yyyy = today.getFullYear()
         let mm = today.getMonth() + 1

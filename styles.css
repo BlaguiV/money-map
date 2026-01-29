@@ -120,6 +120,58 @@ body {
     background-color: rgb(2, 130, 2);
 }
 
+.expenses {
+    display: grid;
+    gap: 2px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.expenses-header {
+    display: grid;
+    grid-template-columns: 25% 15% 25% 30% 5%;
+    background-color: #f0f0f0;
+    font-weight: 600;
+    padding: 10px;
+    align-items: center;
+}
+
+.expenses-row {
+    display: grid;
+    grid-template-columns: 25% 15% 25% 30% 5%;
+    padding: 10px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #fff;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.expenses-row:hover {
+    background-color: #f9f9f9;
+}
+
+.expenses-header div,
+.expenses-row div {
+    padding: 0 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.expenses-row div:last-child {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.expenses-row div:last-child img {
+    width: 18px;
+    height: 18px;
+}
+
+
+
 @media (max-width: 480px) {
     .top-bar h1 {
         font-size: 1.2rem;
