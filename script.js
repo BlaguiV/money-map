@@ -1,3 +1,4 @@
+// ==================== ELEMENTS ====================
 const amountInput = document.getElementById("amount")
 const categoryInput = document.getElementById("category")
 const dateInput = document.getElementById("date")
@@ -14,23 +15,37 @@ const openModal = document.querySelector(".edit")
 const confirmBtnModal = document.getElementById("modal-budget-confirm")
 const errorContainer = document.getElementById("error-container")
 
-function validateInput(input) {
-    if (input.value.trim() === "") {
-        input.style.border = "2px solid red";
-        return false;
-    } else {
-        input.style.border = "";
-        return true;
-    }
-}
-
+// GLOBAL TOTALS
 let todayTotal = 0
 let monthTotal = 0
 
-todaySpending.textContent = "$0"
-month.textContent = "$0"
-budget.textContent = "$0"
+todaySpending.textContent = "$0.00"
+month.textContent = "$0.00"
+budget.textContent = "$0.00"
 
+// ERROR TOAST
+function showErrorMessage(message) {
+    errorContainer.textContent = message
+    errorContainer.classList.add("show")
+
+    setTimeout(() => {
+        errorContainer.classList.remove("show")
+    }, 3000)
+}
+
+// VALIDATION
+function validateInput(input) {
+    if (input.value.trim() === "") {
+        input.style.border = "2px solid red"
+        showErrorMessage(`The "${input.placeholder}" field cannot be empty!`)
+        return false
+    } else {
+        input.style.border = ""
+        return true
+    }
+}
+
+// MODAL BUDGET
 openModal.addEventListener("click", () => {
     modalOverlay.classList.add("active")
 })
@@ -43,18 +58,23 @@ confirmBtnModal.addEventListener("click", () => {
     const isBudgetValid = validateInput(modalBudgetInput)
     if (!isBudgetValid) return
 
-    budget.textContent = `$${modalBudgetInput.value}`
+    budget.textContent = `$${parseFloat(modalBudgetInput.value).toFixed(2)}`
     modalOverlay.classList.remove("active")
     modalBudgetInput.value = ""
 })
 
-
+//  ADD EXPENSE
 addBtn.addEventListener("click", () => {
-    const isAmountValid = validateInput(amountInput);
-    const isCategoryValid = validateInput(categoryInput);
+    const isAmountValid = validateInput(amountInput)
+    const isCategoryValid = validateInput(categoryInput)
 
-    if (!isAmountValid || !isCategoryValid) return;
+    if (!isAmountValid || !isCategoryValid) return
+    if (budget.textContent === "$0.00") {
+        showErrorMessage("Enter your budget!")
+        return
+    }
 
+    // CREATE NEW ROW
     const newRow = document.createElement("div")
     newRow.classList.add("expenses-row")
 
@@ -63,7 +83,7 @@ addBtn.addEventListener("click", () => {
 
     const amountItem = document.createElement("div")
     amountItem.style.color = "red"
-    amountItem.textContent = `$${amountInput.value}`
+    amountItem.textContent = `$${parseFloat(amountInput.value).toFixed(2)}`
 
     const categoryItem = document.createElement("div")
     categoryItem.textContent = categoryInput.value
@@ -78,39 +98,33 @@ addBtn.addEventListener("click", () => {
     deleteItem.appendChild(deleteImg)
 
     newRow.append(dateItem, amountItem, categoryItem, noteItem, deleteItem)
-
     expensesCont.appendChild(newRow)
 
-    const amount = Number(amountItem.textContent.replace("$", ""))
+    //  UPDATE TOTALS
+    const amount = parseFloat(amountItem.textContent.replace("$", ""))
     const expenseDate = dateInput.value
-
-    if (expenseDate == getTodayDate()) {
-        todayTotal += amount
-    }
-
     const expenseMonth = new Date(expenseDate).getMonth()
-    if (expenseMonth == getCurrentMonth()) {
-        monthTotal += amount
-    }
+
+    if (expenseDate === getTodayDate()) todayTotal += amount
+    if (expenseMonth === getCurrentMonth()) monthTotal += amount
+
     updateTotals()
 
+    //  DELETE EXPENSE
     deleteImg.addEventListener("click", () => {
-        const amount = Number(amountInput.value)
-        const expenseDate = dateItem.textContent.replace("$", "")
+        const amount = parseFloat(amountItem.textContent.replace("$", ""))
+        const expenseDate = dateItem.textContent
+        const expenseMonth = new Date(expenseDate).getMonth()
 
-        if (expenseDate == getTodayDate()) {
-            todayTotal -= amount
-        }
-
-        if (expenseMonth == getCurrentMonth()) {
-            monthTotal -= amount
-        }
+        if (expenseDate === getTodayDate()) todayTotal -= amount
+        if (expenseMonth === getCurrentMonth()) monthTotal -= amount
 
         updateTotals()
         newRow.remove()
     })
 
-    let today = new Date()
+    // RESET INPUTS
+    const today = new Date()
     let yyyy = today.getFullYear()
     let mm = today.getMonth() + 1
     let dd = today.getDate()
@@ -120,12 +134,12 @@ addBtn.addEventListener("click", () => {
     amountInput.value = ""
     categoryInput.value = ""
     noteInput.value = ""
-    dateInput.value = `${yyyy}-${mm}-${dd}`;
-});
+    dateInput.value = `${yyyy}-${mm}-${dd}`
+})
 
+//  HELPERS
 function getTodayDate() {
-    const today = new Date()
-    return today.toISOString().split("T")[0]
+    return new Date().toISOString().split("T")[0]
 }
 
 function getCurrentMonth() {
@@ -133,8 +147,6 @@ function getCurrentMonth() {
 }
 
 function updateTotals() {
-    todaySpending.textContent = `$${todayTotal}`
-    month.textContent = `$${monthTotal}`
+    todaySpending.textContent = `$${todayTotal.toFixed(2)}`
+    month.textContent = `$${monthTotal.toFixed(2)}`
 }
-
-
