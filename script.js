@@ -4,9 +4,15 @@ const dateInput = document.getElementById("date")
 const noteInput = document.getElementById("note")
 const addBtn = document.getElementById("btn-add")
 const expensesCont = document.querySelector(".expenses")
-let budget = 0
-let todaysSpending = 0
-let thisMonthSpending = 0
+const todaySpending = document.getElementById("today")
+const month = document.getElementById("month")
+const budget = document.getElementById("budget")
+const modalOverlay = document.querySelector(".modal-overlay")
+const closeModal = document.getElementById("close-modal")
+const modalBudgetInput = document.getElementById("modal-budget")
+const openModal = document.querySelector(".edit")
+const confirmBtnModal = document.getElementById("modal-budget-confirm")
+const errorContainer = document.getElementById("error-container")
 
 function validateInput(input) {
     if (input.value.trim() === "") {
@@ -17,6 +23,30 @@ function validateInput(input) {
         return true;
     }
 }
+
+let todayTotal = 0
+let monthTotal = 0
+
+todaySpending.textContent = "$0"
+month.textContent = "$0"
+budget.textContent = "$0"
+
+openModal.addEventListener("click", () => {
+    modalOverlay.classList.add("active")
+})
+
+closeModal.addEventListener("click", () => {
+    modalOverlay.classList.remove("active")
+})
+
+confirmBtnModal.addEventListener("click", () => {
+    const isBudgetValid = validateInput(modalBudgetInput)
+    if (!isBudgetValid) return
+
+    budget.textContent = `$${modalBudgetInput.value}`
+    modalOverlay.classList.remove("active")
+    modalBudgetInput.value = ""
+})
 
 
 addBtn.addEventListener("click", () => {
@@ -31,8 +61,9 @@ addBtn.addEventListener("click", () => {
     const dateItem = document.createElement("div")
     dateItem.textContent = dateInput.value
 
-    const amoutItem = document.createElement("div")
-    amoutItem.textContent = `$${amountInput.value}`
+    const amountItem = document.createElement("div")
+    amountItem.style.color = "red"
+    amountItem.textContent = `$${amountInput.value}`
 
     const categoryItem = document.createElement("div")
     categoryItem.textContent = categoryInput.value
@@ -46,11 +77,36 @@ addBtn.addEventListener("click", () => {
     deleteImg.style.cursor = "pointer"
     deleteItem.appendChild(deleteImg)
 
-    newRow.append(dateItem, amoutItem, categoryItem, noteItem, deleteItem)
+    newRow.append(dateItem, amountItem, categoryItem, noteItem, deleteItem)
 
     expensesCont.appendChild(newRow)
 
+    const amount = Number(amountItem.textContent.replace("$", ""))
+    const expenseDate = dateInput.value
+
+    if (expenseDate == getTodayDate()) {
+        todayTotal += amount
+    }
+
+    const expenseMonth = new Date(expenseDate).getMonth()
+    if (expenseMonth == getCurrentMonth()) {
+        monthTotal += amount
+    }
+    updateTotals()
+
     deleteImg.addEventListener("click", () => {
+        const amount = Number(amountInput.value)
+        const expenseDate = dateItem.textContent.replace("$", "")
+
+        if (expenseDate == getTodayDate()) {
+            todayTotal -= amount
+        }
+
+        if (expenseMonth == getCurrentMonth()) {
+            monthTotal -= amount
+        }
+
+        updateTotals()
         newRow.remove()
     })
 
@@ -64,5 +120,21 @@ addBtn.addEventListener("click", () => {
     amountInput.value = ""
     categoryInput.value = ""
     noteInput.value = ""
-    inputDate.value = `${yyyy}-${mm}-${dd}`;
+    dateInput.value = `${yyyy}-${mm}-${dd}`;
 });
+
+function getTodayDate() {
+    const today = new Date()
+    return today.toISOString().split("T")[0]
+}
+
+function getCurrentMonth() {
+    return new Date().getMonth()
+}
+
+function updateTotals() {
+    todaySpending.textContent = `$${todayTotal}`
+    month.textContent = `$${monthTotal}`
+}
+
+

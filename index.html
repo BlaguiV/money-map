@@ -19,15 +19,15 @@
         <div class="spending">
             <div class="today">
                 <p>Today`s Spending</p>
-                <h2>$420.00</h2>
+                <h2 id="today"></h2>
             </div>
             <div class="this-month">
                 <p>This Month</p>
-                <h2>$6,350.00</h2>
+                <h2 id="month"></h2>
             </div>
             <div class="monthly-budget">
-                <p>Monthly Budget</p>
-                <h2>$8,000.00<img class="edit" src="./assets/pen.svg" /></h2>
+                <p>Monthly Budget<img class="edit" src="./assets/pen.svg" /></p>
+                <h2 id="budget"></h2>
             </div>
         </div>
 
@@ -53,9 +53,18 @@
                 <div>Note</div>
             </div>
         </div>
-
-
     </div>
+
+    <div class="modal-overlay">
+        <div class="modal">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2>Edit your budget</h2>
+            <input id="modal-budget" placeholder="Enter your budget..." type="number" />
+            <button id="modal-budget-confirm">Confirm</button>
+        </div>
+    </div>
+
+    <div id="error-container" class="error-container"></div>
 
     <script>
         const inputDate = document.getElementById('date')
