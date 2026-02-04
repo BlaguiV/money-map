@@ -12,24 +12,95 @@ const closeModal = document.getElementById("close-modal")
 const modalBudgetInput = document.getElementById("modal-budget")
 const openModal = document.querySelector(".edit")
 const confirmBtnModal = document.getElementById("modal-budget-confirm")
-const errorContainer = document.getElementById("error-container")
 
-function validateInput(input) {
-    if (input.value.trim() === "") {
-        input.style.border = "2px solid red";
-        return false;
-    } else {
-        input.style.border = "";
-        return true;
-    }
-}
-
+let expenses = JSON.parse(localStorage.getItem("expenses")) || []
 let todayTotal = 0
 let monthTotal = 0
 
-todaySpending.textContent = "$0"
-month.textContent = "$0"
-budget.textContent = "$0"
+function formatMoney(value) {
+    return Number(value).toFixed(2)
+}
+
+budget.textContent = `$${formatMoney(localStorage.getItem("budget") || 0)}`
+
+function validateInput(input) {
+    if (input.value.trim() === "") {
+        input.style.border = "2px solid red"
+        return false
+    }
+    input.style.border = ""
+    return true
+}
+
+function getTodayDate() {
+    return new Date().toISOString().split("T")[0]
+}
+
+function getCurrentMonth() {
+    return new Date().getMonth()
+}
+
+function updateTotals() {
+    todaySpending.textContent = `$${formatMoney(todayTotal)}`
+    month.textContent = `$${formatMoney(monthTotal)}`
+}
+
+function saveExpenses() {
+    localStorage.setItem("expenses", JSON.stringify(expenses))
+}
+
+function saveBudget(value) {
+    localStorage.setItem("budget", formatMoney(value))
+}
+
+function renderExpenses() {
+    expensesCont.innerHTML = ""
+    todayTotal = 0
+    monthTotal = 0
+
+    expenses.forEach((expense, index) => {
+        const row = document.createElement("div")
+        row.classList.add("expenses-row")
+
+        const date = document.createElement("div")
+        date.textContent = expense.date
+
+        const amount = document.createElement("div")
+        amount.style.color = "red"
+        amount.textContent = `$${formatMoney(expense.amount)}`
+
+        const category = document.createElement("div")
+        category.textContent = expense.category
+
+        const note = document.createElement("div")
+        note.textContent = expense.note
+
+        const del = document.createElement("div")
+        const img = document.createElement("img")
+        img.src = "./assets/delete.svg"
+        img.style.cursor = "pointer"
+        del.appendChild(img)
+
+        row.append(date, amount, category, note, del)
+        expensesCont.appendChild(row)
+
+        if (expense.date === getTodayDate()) {
+            todayTotal += expense.amount
+        }
+
+        if (new Date(expense.date).getMonth() === getCurrentMonth()) {
+            monthTotal += expense.amount
+        }
+
+        img.addEventListener("click", () => {
+            expenses.splice(index, 1)
+            saveExpenses()
+            renderExpenses()
+        })
+    })
+
+    updateTotals()
+}
 
 openModal.addEventListener("click", () => {
     modalOverlay.classList.add("active")
@@ -40,101 +111,33 @@ closeModal.addEventListener("click", () => {
 })
 
 confirmBtnModal.addEventListener("click", () => {
-    const isBudgetValid = validateInput(modalBudgetInput)
-    if (!isBudgetValid) return
+    if (!validateInput(modalBudgetInput)) return
 
-    budget.textContent = `$${modalBudgetInput.value}`
+    budget.textContent = `$${formatMoney(modalBudgetInput.value)}`
+    saveBudget(modalBudgetInput.value)
+
     modalOverlay.classList.remove("active")
     modalBudgetInput.value = ""
 })
 
-
 addBtn.addEventListener("click", () => {
-    const isAmountValid = validateInput(amountInput);
-    const isCategoryValid = validateInput(categoryInput);
+    if (!validateInput(amountInput) || !validateInput(categoryInput)) return
 
-    if (!isAmountValid || !isCategoryValid) return;
-
-    const newRow = document.createElement("div")
-    newRow.classList.add("expenses-row")
-
-    const dateItem = document.createElement("div")
-    dateItem.textContent = dateInput.value
-
-    const amountItem = document.createElement("div")
-    amountItem.style.color = "red"
-    amountItem.textContent = `$${amountInput.value}`
-
-    const categoryItem = document.createElement("div")
-    categoryItem.textContent = categoryInput.value
-
-    const noteItem = document.createElement("div")
-    noteItem.textContent = noteInput.value
-
-    const deleteItem = document.createElement("div")
-    const deleteImg = document.createElement("img")
-    deleteImg.src = "./assets/delete.svg"
-    deleteImg.style.cursor = "pointer"
-    deleteItem.appendChild(deleteImg)
-
-    newRow.append(dateItem, amountItem, categoryItem, noteItem, deleteItem)
-
-    expensesCont.appendChild(newRow)
-
-    const amount = Number(amountItem.textContent.replace("$", ""))
-    const expenseDate = dateInput.value
-
-    if (expenseDate == getTodayDate()) {
-        todayTotal += amount
+    const expense = {
+        amount: Number(formatMoney(amountInput.value)),
+        category: categoryInput.value,
+        note: noteInput.value,
+        date: dateInput.value
     }
 
-    const expenseMonth = new Date(expenseDate).getMonth()
-    if (expenseMonth == getCurrentMonth()) {
-        monthTotal += amount
-    }
-    updateTotals()
-
-    deleteImg.addEventListener("click", () => {
-        const amount = Number(amountInput.value)
-        const expenseDate = dateItem.textContent.replace("$", "")
-
-        if (expenseDate == getTodayDate()) {
-            todayTotal -= amount
-        }
-
-        if (expenseMonth == getCurrentMonth()) {
-            monthTotal -= amount
-        }
-
-        updateTotals()
-        newRow.remove()
-    })
-
-    let today = new Date()
-    let yyyy = today.getFullYear()
-    let mm = today.getMonth() + 1
-    let dd = today.getDate()
-    if (mm < 10) mm = "0" + mm
-    if (dd < 10) dd = "0" + dd
+    expenses.push(expense)
+    saveExpenses()
+    renderExpenses()
 
     amountInput.value = ""
     categoryInput.value = ""
     noteInput.value = ""
-    dateInput.value = `${yyyy}-${mm}-${dd}`;
-});
+    dateInput.value = getTodayDate()
+})
 
-function getTodayDate() {
-    const today = new Date()
-    return today.toISOString().split("T")[0]
-}
-
-function getCurrentMonth() {
-    return new Date().getMonth()
-}
-
-function updateTotals() {
-    todaySpending.textContent = `$${todayTotal}`
-    month.textContent = `$${monthTotal}`
-}
-
-
+renderExpenses()
