@@ -237,7 +237,8 @@ body {
 }
 
 .error-container {
-    width: 100%;
+    width: auto;
+    position: fixed;
     background-color: #ffdddd;
     color: #a10000;
     border: 1px solid #ff5c5c;

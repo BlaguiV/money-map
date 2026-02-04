@@ -21,11 +21,24 @@ function formatMoney(value) {
     return Number(value).toFixed(2)
 }
 
+function showMessageError(message) {
+    const errorContainer = document.getElementById("error-container")
+
+    errorContainer.textContent = message
+    errorContainer.style.display("block")
+
+    setTimeout(() => {
+        errorContainer.style.display("none")
+        errorContainer.textContent = ""
+    }, 3000);
+}
+
 budget.textContent = `$${formatMoney(localStorage.getItem("budget") || 0)}`
 
 function validateInput(input) {
     if (input.value.trim() === "") {
         input.style.border = "2px solid red"
+        showMessageError("Input cannot be empty")
         return false
     }
     input.style.border = ""
