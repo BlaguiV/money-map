@@ -12,10 +12,15 @@ const closeModal = document.getElementById("close-modal")
 const modalBudgetInput = document.getElementById("modal-budget")
 const openModal = document.querySelector(".edit")
 const confirmBtnModal = document.getElementById("modal-budget-confirm")
+const filterOpenBtn = document.getElementById('filter-open-btn')
+const filterModalOverlay = document.querySelector(".filter-modal-overlay")
+const filterCategory = document.getElementById("filter-category")
+const closeModalFilter = document.getElementById("close-modal-filter")
 
 let expenses = JSON.parse(localStorage.getItem("expenses")) || []
 let todayTotal = 0
 let monthTotal = 0
+let currentFilter = "all"
 
 function formatMoney(value) {
     return Number(value).toFixed(2)
@@ -67,7 +72,14 @@ function saveBudget(value) {
 }
 
 function renderExpenses() {
-    expensesCont.innerHTML = ""
+    expensesCont.innerHTML = `
+        <div class="expenses-header">
+            <div>Date</div>
+            <div>Amount</div>
+            <div>Category</div>
+            <div>Note</div>
+        </div>
+    `
     todayTotal = 0
     monthTotal = 0
 
@@ -121,6 +133,14 @@ openModal.addEventListener("click", () => {
 
 closeModal.addEventListener("click", () => {
     modalOverlay.classList.remove("active")
+})
+
+filterOpenBtn.addEventListener("click", () => {
+    filterModalOverlay.style.display = "flex"
+})
+
+closeModalFilter.addEventListener("click", () => {
+    filterModalOverlay.style.display = "none"
 })
 
 confirmBtnModal.addEventListener("click", () => {
