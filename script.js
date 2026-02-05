@@ -25,10 +25,10 @@ function showMessageError(message) {
     const errorContainer = document.getElementById("error-container")
 
     errorContainer.textContent = message
-    errorContainer.style.display("block")
+    errorContainer.style.display = "block"
 
     setTimeout(() => {
-        errorContainer.style.display("none")
+        errorContainer.style.display = "none"
         errorContainer.textContent = ""
     }, 3000);
 }
