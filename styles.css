@@ -113,6 +113,17 @@ body {
     cursor: pointer;
 }
 
+.add-expense select {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    min-width: 100px;
+    cursor: pointer;
+}
+
+
 .add-expense button {
     background-color: rgb(132, 255, 132);
     padding: 12px;
@@ -237,12 +248,21 @@ body {
 }
 
 .error-container {
+<<<<<<< HEAD
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
     background-color: #ff5555;
     color: white;
+=======
+    width: auto;
+    position: fixed;
+    background-color: #ffdddd;
+    color: #a10000;
+    border: 1px solid #ff5c5c;
+    padding: 10px 16px;
+>>>>>>> dev
     border-radius: 6px;
     padding: 10px 20px;
     font-size: 0.95rem;

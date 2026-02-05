@@ -13,6 +13,7 @@ const closeModal = document.getElementById("close-modal")
 const modalBudgetInput = document.getElementById("modal-budget")
 const openModal = document.querySelector(".edit")
 const confirmBtnModal = document.getElementById("modal-budget-confirm")
+<<<<<<< HEAD
 const errorContainer = document.getElementById("error-container")
 
 // GLOBAL TOTALS
@@ -22,6 +23,110 @@ let monthTotal = 0
 todaySpending.textContent = "$0.00"
 month.textContent = "$0.00"
 budget.textContent = "$0.00"
+=======
+
+let expenses = JSON.parse(localStorage.getItem("expenses")) || []
+let todayTotal = 0
+let monthTotal = 0
+
+function formatMoney(value) {
+    return Number(value).toFixed(2)
+}
+
+function showMessageError(message) {
+    const errorContainer = document.getElementById("error-container")
+
+    errorContainer.textContent = message
+    errorContainer.style.display = "block"
+
+    setTimeout(() => {
+        errorContainer.style.display = "none"
+        errorContainer.textContent = ""
+    }, 3000);
+}
+
+budget.textContent = `$${formatMoney(localStorage.getItem("budget") || 0)}`
+
+function validateInput(input) {
+    if (input.value.trim() === "") {
+        input.style.border = "2px solid red"
+        showMessageError("Input cannot be empty")
+        return false
+    }
+    input.style.border = ""
+    return true
+}
+
+function getTodayDate() {
+    return new Date().toISOString().split("T")[0]
+}
+
+function getCurrentMonth() {
+    return new Date().getMonth()
+}
+
+function updateTotals() {
+    todaySpending.textContent = `$${formatMoney(todayTotal)}`
+    month.textContent = `$${formatMoney(monthTotal)}`
+}
+
+function saveExpenses() {
+    localStorage.setItem("expenses", JSON.stringify(expenses))
+}
+
+function saveBudget(value) {
+    localStorage.setItem("budget", formatMoney(value))
+}
+
+function renderExpenses() {
+    expensesCont.innerHTML = ""
+    todayTotal = 0
+    monthTotal = 0
+
+    expenses.forEach((expense, index) => {
+        const row = document.createElement("div")
+        row.classList.add("expenses-row")
+
+        const date = document.createElement("div")
+        date.textContent = expense.date
+
+        const amount = document.createElement("div")
+        amount.style.color = "red"
+        amount.textContent = `$${formatMoney(expense.amount)}`
+
+        const category = document.createElement("div")
+        category.textContent = expense.category
+
+        const note = document.createElement("div")
+        note.textContent = expense.note
+
+        const del = document.createElement("div")
+        const img = document.createElement("img")
+        img.src = "./assets/delete.svg"
+        img.style.cursor = "pointer"
+        del.appendChild(img)
+
+        row.append(date, amount, category, note, del)
+        expensesCont.appendChild(row)
+
+        if (expense.date === getTodayDate()) {
+            todayTotal += expense.amount
+        }
+
+        if (new Date(expense.date).getMonth() === getCurrentMonth()) {
+            monthTotal += expense.amount
+        }
+
+        img.addEventListener("click", () => {
+            expenses.splice(index, 1)
+            saveExpenses()
+            renderExpenses()
+        })
+    })
+
+    updateTotals()
+}
+>>>>>>> dev
 
 // ERROR TOAST
 function showErrorMessage(message) {
@@ -55,14 +160,20 @@ closeModal.addEventListener("click", () => {
 })
 
 confirmBtnModal.addEventListener("click", () => {
-    const isBudgetValid = validateInput(modalBudgetInput)
-    if (!isBudgetValid) return
+    if (!validateInput(modalBudgetInput)) return
 
+    budget.textContent = `$${formatMoney(modalBudgetInput.value)}`
+    saveBudget(modalBudgetInput.value)
+
+<<<<<<< HEAD
     budget.textContent = `$${parseFloat(modalBudgetInput.value).toFixed(2)}`
+=======
+>>>>>>> dev
     modalOverlay.classList.remove("active")
     modalBudgetInput.value = ""
 })
 
+<<<<<<< HEAD
 //  ADD EXPENSE
 addBtn.addEventListener("click", () => {
     const isAmountValid = validateInput(amountInput)
@@ -130,10 +241,26 @@ addBtn.addEventListener("click", () => {
     let dd = today.getDate()
     if (mm < 10) mm = "0" + mm
     if (dd < 10) dd = "0" + dd
+=======
+addBtn.addEventListener("click", () => {
+    if (!validateInput(amountInput) || !validateInput(categoryInput)) return
+
+    const expense = {
+        amount: Number(formatMoney(amountInput.value)),
+        category: categoryInput.value,
+        note: noteInput.value,
+        date: dateInput.value
+    }
+
+    expenses.push(expense)
+    saveExpenses()
+    renderExpenses()
+>>>>>>> dev
 
     amountInput.value = ""
     categoryInput.value = ""
     noteInput.value = ""
+<<<<<<< HEAD
     dateInput.value = `${yyyy}-${mm}-${dd}`
 })
 
@@ -150,3 +277,9 @@ function updateTotals() {
     todaySpending.textContent = `$${todayTotal.toFixed(2)}`
     month.textContent = `$${monthTotal.toFixed(2)}`
 }
+=======
+    dateInput.value = getTodayDate()
+})
+
+renderExpenses()
+>>>>>>> dev
