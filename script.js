@@ -16,11 +16,14 @@ const filterOpenBtn = document.getElementById('filter-open-btn')
 const filterModalOverlay = document.querySelector(".filter-modal-overlay")
 const filterCategory = document.getElementById("filter-category")
 const closeModalFilter = document.getElementById("close-modal-filter")
+const confirmFilterBtn = document.querySelector(".confirm-filter")
+const clearAllFilter = document.querySelector(".clear-all-filter")
+
 
 let expenses = JSON.parse(localStorage.getItem("expenses")) || []
 let todayTotal = 0
 let monthTotal = 0
-let currentFilter = "all"
+let filterCategories = loadFilter()
 
 function formatMoney(value) {
     return Number(value).toFixed(2)
@@ -71,6 +74,15 @@ function saveBudget(value) {
     localStorage.setItem("budget", formatMoney(value))
 }
 
+function saveFilter() {
+    localStorage.setItem("filterCategories", JSON.stringify(filterCategories))
+}
+
+function loadFilter() {
+    return JSON.parse(localStorage.getItem("filterCategories")) || []
+}
+
+
 function renderExpenses() {
     expensesCont.innerHTML = `
         <div class="expenses-header">
@@ -80,33 +92,55 @@ function renderExpenses() {
             <div>Note</div>
         </div>
     `
+
     todayTotal = 0
     monthTotal = 0
 
-    expenses.forEach((expense, index) => {
+    let expensesToShow = expenses
+
+    if (filterCategories.length > 0) {
+        expensesToShow = expenses.filter(expense =>
+            filterCategories.includes(expense.category)
+        )
+    }
+
+    expensesToShow.forEach(expense => {
         const row = document.createElement("div")
         row.classList.add("expenses-row")
 
-        const date = document.createElement("div")
-        date.textContent = expense.date
+        const dateDiv = document.createElement("div")
+        dateDiv.textContent = expense.date
 
-        const amount = document.createElement("div")
-        amount.style.color = "red"
-        amount.textContent = `$${formatMoney(expense.amount)}`
+        const amountDiv = document.createElement("div")
+        amountDiv.textContent = `$${formatMoney(expense.amount)}`
+        amountDiv.style.color = "red"
 
-        const category = document.createElement("div")
-        category.textContent = expense.category
+        const categoryDiv = document.createElement("div")
+        categoryDiv.textContent = expense.category
 
-        const note = document.createElement("div")
-        note.textContent = expense.note
+        const noteDiv = document.createElement("div")
+        noteDiv.textContent = expense.note
 
-        const del = document.createElement("div")
-        const img = document.createElement("img")
-        img.src = "./assets/delete.svg"
-        img.style.cursor = "pointer"
-        del.appendChild(img)
+        const deleteDiv = document.createElement("div")
+        const deleteImg = document.createElement("img")
+        deleteImg.src = "./assets/delete.svg"
+        deleteImg.style.cursor = "pointer"
+        deleteDiv.appendChild(deleteImg)
 
-        row.append(date, amount, category, note, del)
+        row.append(
+            dateDiv,
+            amountDiv,
+            categoryDiv,
+            noteDiv,
+            deleteDiv
+        )
+
+        deleteImg.addEventListener("click", () => {
+            expenses = expenses.filter(e => e !== expense)
+            saveExpenses()
+            renderExpenses()
+        })
+
         expensesCont.appendChild(row)
 
         if (expense.date === getTodayDate()) {
@@ -116,16 +150,12 @@ function renderExpenses() {
         if (new Date(expense.date).getMonth() === getCurrentMonth()) {
             monthTotal += expense.amount
         }
-
-        img.addEventListener("click", () => {
-            expenses.splice(index, 1)
-            saveExpenses()
-            renderExpenses()
-        })
     })
 
     updateTotals()
 }
+
+
 
 openModal.addEventListener("click", () => {
     modalOverlay.classList.add("active")
@@ -137,11 +167,42 @@ closeModal.addEventListener("click", () => {
 
 filterOpenBtn.addEventListener("click", () => {
     filterModalOverlay.style.display = "flex"
+
+    document
+        .querySelectorAll('.filter-modal input[type="checkbox"]')
+        .forEach(cb => {
+            cb.checked = filterCategories.includes(cb.value)
+        })
 })
+
 
 closeModalFilter.addEventListener("click", () => {
     filterModalOverlay.style.display = "none"
 })
+
+confirmFilterBtn.addEventListener("click", () => {
+    const checked = document.querySelectorAll(
+        '.filter-modal input[type="checkbox"]:checked'
+    )
+
+    filterCategories = [...checked].map(cb => cb.value)
+
+    saveFilter()
+    filterModalOverlay.style.display = "none"
+    renderExpenses()
+})
+
+
+clearAllFilter.addEventListener("click", () => {
+    document
+        .querySelectorAll('.filter-modal input[type="checkbox"]')
+        .forEach(cb => cb.checked = false)
+
+    filterCategories = []
+    saveFilter()
+    renderExpenses()
+})
+
 
 confirmBtnModal.addEventListener("click", () => {
     if (!validateInput(modalBudgetInput)) return
