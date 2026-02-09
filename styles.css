@@ -100,7 +100,7 @@ body {
 .add-expense div {
     display: flex;
     gap: 10px;
-    flex: wrap;
+    flex-wrap: wrap;
 }
 
 .add-expense h3 {
@@ -194,6 +194,11 @@ body {
     border: none;
     border-radius: 16px;
     cursor: pointer;
+    transition: 0.5s ease;
+}
+
+.clear-all-filter:hover {
+    background-color: #ff1717;
 }
 
 .confirm-filter {
@@ -205,6 +210,11 @@ body {
     border: none;
     border-radius: 16px;
     cursor: pointer;
+    transition: 0.5s ease;
+}
+
+.confirm-filter:hover {
+    background-color: rgb(2, 130, 2);
 }
 
 .add-expense button:hover {
@@ -336,21 +346,105 @@ body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
 
-
-
-@media (max-width: 480px) {
-    .top-bar h1 {
-        font-size: 1.2rem;
+    .spending {
+        gap: 12px;
     }
 
     .spending div {
-        flex: 1 1 100%;
+        flex: 1 1 45%;
         max-width: 100%;
     }
 
-    .wallet {
+    .functionality {
+        flex-wrap: wrap;
+    }
+
+    .add-expense input,
+    .add-expense select,
+    .add-expense button {
+        flex: 1 1 48%;
+    }
+
+    .add-expense img {
+        width: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px 0;
+    }
+
+    .container {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .top-bar {
+        justify-content: center;
+    }
+
+    .spending {
+        flex-direction: column;
+    }
+
+    .spending div {
+        max-width: 100%;
+    }
+
+    .functionality {
+        flex-direction: column;
+    }
+
+    .add-expense input,
+    .add-expense select,
+    .add-expense button {
+        width: 100%;
+    }
+
+    .add-expense img {
         width: 28px;
-        height: 28px;
+        align-self: center;
+    }
+
+    .expenses-header {
+        display: none;
+    }
+
+    .expenses-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .expenses-row div {
+        white-space: normal;
+    }
+
+    .expenses-row div::before {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .expenses-row div:nth-child(1)::before {
+        content: "Date";
+    }
+
+    .expenses-row div:nth-child(2)::before {
+        content: "Amount";
+    }
+
+    .expenses-row div:nth-child(3)::before {
+        content: "Category";
+    }
+
+    .expenses-row div:nth-child(4)::before {
+        content: "Note";
     }
 }
