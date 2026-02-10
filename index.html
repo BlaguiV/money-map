@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoneyMap</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="forTheme.css" />
+    <script src="themeToggle.js" defer></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -14,6 +16,7 @@
         <header class="top-bar">
             <img class="wallet" src="assets/wallet.svg" />
             <h1>MoneyMap</h1>
+            <button class="theme-toggle" id="theme-toggle"><img src="assets/moon.svg"></button>
         </header>
 
         <div class="spending">
@@ -113,16 +116,6 @@
 
     </div>
 
-    <script>
-        const inputDate = document.getElementById('date')
-        let today = new Date()
-        let yyyy = today.getFullYear()
-        let mm = today.getMonth() + 1
-        let dd = today.getDate()
-        if (mm < 10) mm = "0" + mm
-        if (dd < 10) dd = "0" + dd
-        inputDate.value = `${yyyy}-${mm}-${dd}`;
-    </script>
 </body>
 
 </html>

@@ -1,0 +1,76 @@
+body.dark {
+    background-color: #121212;
+}
+
+body.dark .container {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+}
+
+body.dark .top-bar h1 {
+    color: #f1f1f1;
+}
+
+body.dark .spending div {
+    background-color: #242424;
+    box-shadow: none;
+}
+
+body.dark .expenses-header {
+    background-color: #2a2a2a;
+}
+
+body.dark .expenses-row {
+    background-color: #1e1e1e;
+}
+
+body.dark input,
+body.dark select {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+    border-color: #444;
+}
+
+body.dark .theme-toggle img {
+    filter: invert(1);
+}
+
+body.dark .edit {
+    filter: invert(1);
+}
+
+body.dark .today h2 {
+    color: rgb(255, 53, 53)
+}
+
+body.dark .top-bar img {
+    filter: invert(1);
+}
+
+body.dark .filter-modal {
+    background-color: #2a2a2a;
+}
+
+body.dark .filter-modal h2 {
+    color: white;
+}
+
+body.dark #filter-open-btn {
+    filter: invert(1);
+}
+
+body.dark .modal {
+    background-color: #2a2a2a;
+}
+
+body.dark .modal h2 {
+    color: white;
+}
+
+body.dark .filter-options label {
+    color: white;
+}
+
+body.dark .expenses-row img {
+    filter: invert(1);
+}

@@ -37,6 +37,30 @@ body {
     border-bottom: 1px solid #E0E0E0;
 }
 
+.theme-toggle {
+    margin-left: auto;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: 2px solid #e0e0e0;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color .3s, transform .6s;
+}
+
+.theme-toggle:hover {
+    background-color: #f0f0f0;
+    transform: rotate(360deg);
+}
+
+.theme-toggle img {
+    width: 20px;
+    height: 20px;
+}
+
 .edit {
     width: 24px;
     padding-left: 8px;
