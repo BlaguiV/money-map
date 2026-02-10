@@ -50,6 +50,7 @@
 
                     <input id="note" type="text" placeholder="Note (optional)" />
                     <button id="btn-add">Add Expense</button>
+                    <img src="./assets/filter.svg" id="filter-open-btn" />
                 </div>
         </div>
 
@@ -73,6 +74,44 @@
     </div>
 
     <div id="error-container" class="error-container"></div>
+
+    <div class="filter-modal-overlay">
+        <div class="filter-modal">
+            <span class="close-btn" id="close-modal-filter">&times;</span>
+            <h2>Filter by category</h2>
+            <div class="filter-options">
+                <label>
+                    <input type="checkbox" value="Food">
+                    Food
+                </label>
+
+                <label>
+                    <input type="checkbox" value="Transport">
+                    Transport
+                </label>
+
+                <label>
+                    <input type="checkbox" value="Entertainment">
+                    Entertainment
+                </label>
+
+                <label>
+                    <input type="checkbox" value="Shopping">
+                    Shopping
+                </label>
+
+                <label>
+                    <input type="checkbox" value="Health">
+                    Health
+                </label>
+            </div>
+
+            <button class="clear-all-filter">Clear All</button>
+
+            <button class="confirm-filter">Confirm</button>
+        </div>
+
+    </div>
 
     <script>
         const inputDate = document.getElementById('date')
