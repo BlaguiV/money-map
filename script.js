@@ -24,13 +24,17 @@ const closeModalFilter = document.getElementById("close-modal-filter")
 const confirmFilterBtn = document.querySelector(".confirm-filter")
 const clearAllFilter = document.querySelector(".clear-all-filter")
 
-// ===== STATE =====
+const filterMinAmount = document.querySelector(".filter-by-amount-min")
+const filterMaxAmount = document.querySelector(".filter-by-amount-max")
+const filterByDate = document.querySelector(".filter-by-date")
+
+// STATE
 let expenses = JSON.parse(localStorage.getItem("expenses")) || []
 let filterCategories = JSON.parse(localStorage.getItem("filterCategories")) || []
 let todayTotal = 0
 let monthTotal = 0
 
-// ===== HELPERS =====
+// HELPERS
 function formatMoney(value) {
     return Number(value).toFixed(2)
 }
@@ -46,8 +50,7 @@ function getCurrentMonth() {
 function showMessageError(message) {
     errorContainer.textContent = message
     errorContainer.style.display = "block"
-
-    setTimeout(() => {
+    setTimeout(function () {
         errorContainer.style.display = "none"
         errorContainer.textContent = ""
     }, 3000)
@@ -63,7 +66,7 @@ function validateInput(input) {
     return true
 }
 
-// ===== STORAGE =====
+// STORAGE
 function saveExpenses() {
     localStorage.setItem("expenses", JSON.stringify(expenses))
 }
@@ -76,10 +79,10 @@ function saveFilter() {
     localStorage.setItem("filterCategories", JSON.stringify(filterCategories))
 }
 
-// ===== RENDER =====
+// RENDER
 function updateTotals() {
-    todaySpending.textContent = `$${formatMoney(todayTotal)}`
-    month.textContent = `$${formatMoney(monthTotal)}`
+    todaySpending.textContent = "$" + formatMoney(todayTotal)
+    month.textContent = "$" + formatMoney(monthTotal)
 }
 
 function renderExpenses() {
@@ -96,44 +99,68 @@ function renderExpenses() {
     todayTotal = 0
     monthTotal = 0
 
-    let list = expenses
-    if (filterCategories.length) {
-        list = expenses.filter(e => filterCategories.includes(e.category))
-    }
+    for (let i = 0; i < expenses.length; i++) {
+        let expense = expenses[i]
 
-    list.forEach(expense => {
-        const row = document.createElement("div")
-        row.className = "expenses-row"
+        // Фільтр категорій
+        let categoryMatch = true
+        if (filterCategories.length > 0) {
+            categoryMatch = false
+            for (let j = 0; j < filterCategories.length; j++) {
+                if (expense.category === filterCategories[j]) {
+                    categoryMatch = true
+                    break
+                }
+            }
+        }
 
-        row.innerHTML = `
-            <div>${expense.date}</div>
-            <div style="color:red">$${formatMoney(expense.amount)}</div>
-            <div>${expense.category}</div>
-            <div>${expense.note}</div>
-            <div><img src="./assets/delete.svg" style="cursor:pointer"></div>
-        `
+        // Фільтр по сумі
+        let min = 0
+        let max = Infinity
+        if (filterMinAmount.value !== "") min = Number(filterMinAmount.value)
+        if (filterMaxAmount.value !== "") max = Number(filterMaxAmount.value)
 
-        row.querySelector("img").addEventListener("click", () => {
-            expenses = expenses.filter(e => e !== expense)
-            saveExpenses()
-            renderExpenses()
-        })
+        let amountMatch = true
+        if (expense.amount < min || expense.amount > max) amountMatch = false
 
-        expensesCont.appendChild(row)
+        // Фільтр по даті
+        let dateMatch = true
+        if (filterByDate.value !== "") {
+            dateMatch = (expense.date === filterByDate.value)
+        }
+
+        if (categoryMatch && amountMatch && dateMatch) {
+            const row = document.createElement("div")
+            row.className = "expenses-row"
+
+            row.innerHTML = `
+                <div>${expense.date}</div>
+                <div style="color:red">$${formatMoney(expense.amount)}</div>
+                <div>${expense.category}</div>
+                <div>${expense.note}</div>
+                <div><img src="./assets/delete.svg" style="cursor:pointer"></div>
+            `
+
+            // Видалення
+            row.querySelector("img").addEventListener("click", function () {
+                expenses.splice(expenses.indexOf(expense), 1)
+                saveExpenses()
+                renderExpenses()
+            })
+
+            expensesCont.appendChild(row)
+        }
 
         if (expense.date === getTodayDate()) todayTotal += expense.amount
-        if (new Date(expense.date).getMonth() === getCurrentMonth()) {
-            monthTotal += expense.amount
-        }
-    })
+        if (new Date(expense.date).getMonth() === getCurrentMonth()) monthTotal += expense.amount
+    }
 
     updateTotals()
 }
 
-// ===== EVENTS =====
-addBtn.addEventListener("click", () => {
+// EVENTS
+addBtn.addEventListener("click", function () {
     if (!validateInput(amountInput) || !validateInput(categoryInput)) return
-
     if (budget.textContent === "$0.00") {
         showMessageError("Enter your budget!")
         return
@@ -156,49 +183,49 @@ addBtn.addEventListener("click", () => {
 })
 
 // MODAL BUDGET
-openModal.addEventListener("click", () => modalOverlay.classList.add("active"))
-closeModal.addEventListener("click", () => modalOverlay.classList.remove("active"))
-
-confirmBtnModal.addEventListener("click", () => {
+openModal.addEventListener("click", function () {
+    modalOverlay.classList.add("active")
+})
+closeModal.addEventListener("click", function () {
+    modalOverlay.classList.remove("active")
+})
+confirmBtnModal.addEventListener("click", function () {
     if (!validateInput(modalBudgetInput)) return
-
-    budget.textContent = `$${formatMoney(modalBudgetInput.value)}`
+    budget.textContent = "$" + formatMoney(modalBudgetInput.value)
     saveBudget(modalBudgetInput.value)
-
     modalBudgetInput.value = ""
     modalOverlay.classList.remove("active")
 })
 
-// FILTER
-filterOpenBtn.addEventListener("click", () => {
-    filterModalOverlay.style.display = "flex"
-    document
-        .querySelectorAll('.filter-modal input[type="checkbox"]')
-        .forEach(cb => cb.checked = filterCategories.includes(cb.value))
+// FILTER MODAL
+filterOpenBtn.addEventListener("click", function () {
+    filterModalOverlay.classList.add("active")
+    document.querySelectorAll(".filter-modal input[type='checkbox']").forEach(function (cb) {
+        cb.checked = filterCategories.includes(cb.value)
+    })
 })
-
-closeModalFilter.addEventListener("click", () => {
-    filterModalOverlay.style.display = "none"
+closeModalFilter.addEventListener("click", function () {
+    filterModalOverlay.classList.remove("active")
 })
-
-confirmFilterBtn.addEventListener("click", () => {
-    const checked = document.querySelectorAll('.filter-modal input:checked')
-    filterCategories = [...checked].map(cb => cb.value)
+confirmFilterBtn.addEventListener("click", function () {
+    const checked = document.querySelectorAll(".filter-modal input:checked")
+    filterCategories = []
+    for (let i = 0; i < checked.length; i++) filterCategories.push(checked[i].value)
     saveFilter()
-    filterModalOverlay.style.display = "none"
+    filterModalOverlay.classList.remove("active")
     renderExpenses()
 })
-
-clearAllFilter.addEventListener("click", () => {
+clearAllFilter.addEventListener("click", function () {
     filterCategories = []
     saveFilter()
-    document
-        .querySelectorAll('.filter-modal input')
-        .forEach(cb => cb.checked = false)
+    document.querySelectorAll(".filter-modal input").forEach(function (cb) { cb.checked = false })
+    filterMinAmount.value = ""
+    filterMaxAmount.value = ""
+    filterByDate.value = ""
     renderExpenses()
 })
 
 // INIT
-budget.textContent = `$${formatMoney(localStorage.getItem("budget") || 0)}`
+budget.textContent = "$" + formatMoney(localStorage.getItem("budget") || 0)
 dateInput.value = getTodayDate()
 renderExpenses()

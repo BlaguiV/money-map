@@ -179,24 +179,90 @@ body {
 
 .filter-modal-overlay {
     position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
+    top: 0;
+    right: 0;
+    width: 350px;
+    height: 100%;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    pointer-events: auto;
 }
 
-.filter-modal {
-    position: relative;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    min-width: 300px;
+.filter-modal-overlay.active {
+    transform: translateX(0);
+}
+
+.filter-modal h2 {
+    text-align: center;
+}
+
+.extra-filter-amount {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 2px solid #9f9f9f;
+}
+
+.extra-filter-amount h2 {
+    margin-top: 8px;
+}
+
+.extra-filter-amount input {
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    width: 70%;
+    height: 24px;
+    padding: 16px 12px 16px 12px;
+    font-size: 1.1rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.filter-btns {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.extra-filter-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    margin: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 2px solid #9f9f9f;
+}
+
+
+
+
+.filter-modal {
+    background: white;
+    width: 350px;
+    height: 100%;
+    padding: 24px;
+    border-radius: 0;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
     gap: 16px;
 }
+
+.filter-modal-overlay.active .filter-modal {
+    transform: translateX(0);
+}
+
 
 .filter-options {
     display: flex;
@@ -210,7 +276,6 @@ body {
 }
 
 .clear-all-filter {
-    width: 70%;
     background-color: #ff5b5b;
     padding: 8px;
     font-size: 1.1rem;
@@ -221,12 +286,12 @@ body {
     transition: 0.5s ease;
 }
 
+
 .clear-all-filter:hover {
     background-color: #ff1717;
 }
 
 .confirm-filter {
-    width: 70%;
     background-color: rgb(132, 255, 132);
     padding: 8px;
     font-size: 1.1rem;
