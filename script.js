@@ -199,6 +199,10 @@ confirmBtnModal.addEventListener("click", function () {
 
 // FILTER MODAL
 filterOpenBtn.addEventListener("click", function () {
+    if (filterModalOverlay.classList.contains("active")) {
+        filterModalOverlay.classList.remove("active")
+        return
+    }
     filterModalOverlay.classList.add("active")
     document.querySelectorAll(".filter-modal input[type='checkbox']").forEach(function (cb) {
         cb.checked = filterCategories.includes(cb.value)
